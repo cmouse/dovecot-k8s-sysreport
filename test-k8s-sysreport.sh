@@ -21,8 +21,15 @@ export PATH="$MOCKROOT/bin:$PATH"
 cat > "$MOCKROOT/bin/dovecot-sysreport" <<'EOF'
 #!/usr/bin/env bash
 # Creates a tarball under /tmp to simulate real dovecot-sysreport output
+set -eu
+destdir="./"
+case "$1" in
+  -D)
+    destdir=$2
+  ;;
+esac
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
-OUT="/tmp/dovecot-sysreport-${STAMP}.tar.gz"
+OUT="$destdir/dovecot-sysreport-${STAMP}.tar.gz"
 TMPD="$(mktemp -d)"
 echo "mock dovecot report" > "$TMPD/report.txt"
 tar -czf "$OUT" -C "$TMPD" report.txt

@@ -65,7 +65,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 log() { printf '[%s] %s\n' "$(date -u +%H:%M:%S)" "$*" >&2; }
-find_ds_archive_cmd='ls -1t dovecot-sysreport-*.tar.* 2>/dev/null | head -n1'
+find_ds_archive_cmd='ls -1t /tmp/dovecot-sysreport-*.tar.* 2>/dev/null | head -n1'
 
 # ------------------------------------------------------------------------------
 # Mode A: Host (kubectl) mode
@@ -89,7 +89,7 @@ if [[ -n "$NS" && -n "$POD" ]]; then
   fi
 
   # Build dovecot-sysreport command
-  DS_CMD="dovecot-sysreport"
+  DS_CMD="dovecot-sysreport -D /tmp"
   if [[ -n "$CORE_IN_POD_PATH" ]]; then
     DS_CMD="$DS_CMD --core $CORE_IN_POD_PATH"
   fi
@@ -131,7 +131,7 @@ if ! command -v dovecot-sysreport >/dev/null 2>&1; then
 fi
 
 # Run dovecot-sysreport (no --core by default)
-DS_CMD="dovecot-sysreport"
+DS_CMD="dovecot-sysreport -D /tmp"
 if [[ -n "$CORE_IN_POD" ]]; then
   DS_CMD="$DS_CMD --core $CORE_IN_POD"
   log "Running dovecot-sysreport with --core $CORE_IN_POD"
