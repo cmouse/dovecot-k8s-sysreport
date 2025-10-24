@@ -65,7 +65,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 log() { printf '[%s] %s\n' "$(date -u +%H:%M:%S)" "$*" >&2; }
-find_ds_archive_cmd='ls -1t /tmp/dovecot-sysreport-*.tar.* 2>/dev/null | head -n1'
+find_ds_archive_cmd='ls -1t dovecot-sysreport-*.tar.* 2>/dev/null | head -n1'
 
 # ------------------------------------------------------------------------------
 # Mode A: Host (kubectl) mode
@@ -97,10 +97,10 @@ if [[ -n "$NS" && -n "$POD" ]]; then
   log "Running dovecot-sysreport in $NS/$POD${CONTAINER:+ (container=$CONTAINER)}"
   if [[ -n "$CONTAINER" ]]; then
     kubectl -n "$NS" exec "$POD" -c "$CONTAINER" -- $DS_CMD || true
-    DS_ARCHIVE_PATH="$(kubectl -n "$NS" exec "$POD" -c "$CONTAINER" -- sh -lc "$find_ds_archive_cmd" | tr -d '\r')"
+    DS_ARCHIVE_PATH="$(kubectl -n "$NS" exec "$POD" -c "$CONTAINER" -- env sh -lc "$find_ds_archive_cmd" | tr -d '\r')"
   else
     kubectl -n "$NS" exec "$POD" -- $DS_CMD || true
-    DS_ARCHIVE_PATH="$(kubectl -n "$NS" exec "$POD" -- sh -lc "$find_ds_archive_cmd" | tr -d '\r')"
+    DS_ARCHIVE_PATH="$(kubectl -n "$NS" exec "$POD" -- env sh -lc "$find_ds_archive_cmd" | tr -d '\r')"
   fi
 
   [[ -n "${DS_ARCHIVE_PATH:-}" ]] || { echo "dovecot-sysreport archive not found in pod" >&2; exit 1; }
