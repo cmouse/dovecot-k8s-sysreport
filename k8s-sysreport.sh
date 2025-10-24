@@ -96,10 +96,10 @@ if [[ -n "$NS" && -n "$POD" ]]; then
 
   log "Running dovecot-sysreport in $NS/$POD${CONTAINER:+ (container=$CONTAINER)}"
   if [[ -n "$CONTAINER" ]]; then
-    kubectl -n "$NS" exec "$POD" -c "$CONTAINER" -- sh -lc "$DS_CMD" || true
+    kubectl -n "$NS" exec "$POD" -c "$CONTAINER" -- $DS_CMD || true
     DS_ARCHIVE_PATH="$(kubectl -n "$NS" exec "$POD" -c "$CONTAINER" -- sh -lc "$find_ds_archive_cmd" | tr -d '\r')"
   else
-    kubectl -n "$NS" exec "$POD" -- sh -lc "$DS_CMD" || true
+    kubectl -n "$NS" exec "$POD" -- $DS_CMD || true
     DS_ARCHIVE_PATH="$(kubectl -n "$NS" exec "$POD" -- sh -lc "$find_ds_archive_cmd" | tr -d '\r')"
   fi
 
